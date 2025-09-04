@@ -1,24 +1,37 @@
 package com.amigoscode;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
+
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 @Setter
 @Getter
-@NoArgsConstructor
 @EqualsAndHashCode
 @AllArgsConstructor
+@ToString
 public class Customer {
 
     @Id
-    private Integer id;
+    @SequenceGenerator(name = "customer_sequence",
+            sequenceName = "customer_sequence",
+            allocationSize = 1)
+    @GeneratedValue(strategy = SEQUENCE,
+            generator = "customer_sequence")
+    private Long id;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String firstName;
+
+    @Column(columnDefinition = "TEXT")
     private String lastName;
+
+    @Column(nullable = false, unique = true)
     private String email;
+
+    @Column(nullable = false)
     private Integer age;
 
     public Customer(String firstName, String lastName, String email, Integer age) {
@@ -26,6 +39,9 @@ public class Customer {
         this.lastName = lastName;
         this.email = email;
         this.age = age;
+    }
+
+    public Customer() {
     }
 
 }
