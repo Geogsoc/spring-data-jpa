@@ -19,9 +19,17 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c WHERE c.firstName = :name  AND c.age > :age")
     List<Customer> findByFirstNameAndAgeGreaterThan(@Param("name") String firstName, @Param("age") int age);
 
+    @Query(
+            value = "SELECT * FROM customer WHERE first_name = :name AND age > :age",
+            nativeQuery = true)
+    List<Customer> findByFirstNameAndAgeGreaterThanNative(
+            @Param("name") String firstName,
+            @Param("age") int age);
+
     @Transactional
     @Modifying
     @Query("DELETE FROM Customer c WHERE c.email = ?1")
     int deleteCustomerByEmail(String email);
+
 
 }

@@ -1,9 +1,11 @@
 package com.amigoscode;
 
+import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,36 +21,38 @@ public class App {
 
     }
 
-
     @Bean
     CommandLineRunner commandLineRunner(CustomerRepository customerRepository) {
 
-
         return args -> {
 
-            Customer customer = new Customer("Elis", "Porter", "elis@gmail.com", 44);
-            Customer customer2 = new Customer("Bob", "Porter", "eli4s@gmail", 44);
-            customerRepository.save(customer);
-            customerRepository.save(customer2);
+            generateCustomers(customerRepository);
 
             System.out.println(customerRepository.count());
 
-            System.out.println(customerRepository.findAll());
+            Sort sort = Sort.by( "firstName").ascending();
 
-            System.out.println(" System.out.println(customerRepository.existsById(1L))");
-            System.out.println(customerRepository.existsById(1L));
+            customerRepository.findAll(sort).forEach(customer -> {
+                System.out.println(customer.getFirstName());
 
-            Optional<Customer> test = customerRepository.findCustomerByEmail("elis@gmail.com");
-            System.out.println(test.get().toString());
-
-            int isItANumber = customerRepository.deleteCustomerByEmail("elis@gmail.com");
-
-            System.out.println(isItANumber);
-
-            List<Customer> test2 = customerRepository.findByFirstNameAndAgeGreaterThan("Elis", 0);
-            System.out.println(test.get().toString());
-            System.out.println(test2.toString());
-
+            });
         };
+
+    }
+
+    private void generateCustomers(CustomerRepository customerRepository) {
+
+        Faker faker = new Faker();
+        for (int i = 0; i < 100; i++) {
+
+            String firstName = faker.name().firstName();
+            String lastName = faker.name().lastName();
+            String email = "%s.%s@gmail.com".formatted(firstName, lastName);
+
+            Customer customer = new Customer(firstName, lastName, email, faker.number().numberBetween(18, 130));
+
+            customerRepository.save(customer);
+
+        }
     }
 }
