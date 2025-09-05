@@ -30,10 +30,10 @@ public class App {
 
             System.out.println(customerRepository.count());
 
-            Sort sort = Sort.by( "firstName").ascending();
+            Sort sort = Sort.by("firstName").ascending().and(Sort.by("age").ascending());
 
             customerRepository.findAll(sort).forEach(customer -> {
-                System.out.println(customer.getFirstName());
+                System.out.println(customer.getFirstName() + " " + customer.getAge());
 
             });
         };
