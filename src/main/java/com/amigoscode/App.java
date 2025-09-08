@@ -5,6 +5,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.util.List;
@@ -26,18 +29,24 @@ public class App {
 
         return args -> {
 
-            generateCustomers(customerRepository);
+            System.out.println(customerRepository.findAll());
 
-            System.out.println(customerRepository.count());
-
-            Sort sort = Sort.by("firstName").ascending().and(Sort.by("age").ascending());
-
-            customerRepository.findAll(sort).forEach(customer -> {
-                System.out.println(customer.getFirstName() + " " + customer.getAge());
-
-            });
+//            generateCustomers(customerRepository);
+//
+//            System.out.println(customerRepository.count());
+//
+//            Pageable pageable = PageRequest.of(2, 10);
+//
+//            Page<Customer> page = customerRepository.findAll(pageable);
+//            System.out.println(page);
+//            page.get().forEach(System.out::println);
         };
 
+    }
+
+    private static Sort sortAgeName() {
+
+        return Sort.by("firstName").ascending().and(Sort.by("age").ascending());
     }
 
     private void generateCustomers(CustomerRepository customerRepository) {
