@@ -4,6 +4,9 @@ package com.amigoscode;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+import java.util.Set;
+
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
@@ -11,7 +14,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Getter
 @EqualsAndHashCode
 @AllArgsConstructor
-@ToString
+@ToString(exclude = "libraryBooks")
 public class Customer {
 
     @Id
@@ -21,6 +24,9 @@ public class Customer {
     @GeneratedValue(strategy = SEQUENCE,
             generator = "customer_sequence")
     private Long id;
+
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = false)
+    private CustomerIdCard customerIdCard;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String firstName;
@@ -33,6 +39,9 @@ public class Customer {
 
     @Column(nullable = false)
     private Integer age;
+
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
+    private Set<LibraryBook> libraryBooks;
 
     public Customer(String firstName, String lastName, String email, Integer age) {
         this.firstName = firstName;
