@@ -4,6 +4,7 @@ package com.amigoscode;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -40,14 +41,32 @@ public class Customer {
     @Column(nullable = false)
     private Integer age;
 
-    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, fetch = FetchType.EAGER)
-    private Set<LibraryBook> libraryBooks;
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})//,fetch = FetchType.EAGER
+    private Set<LibraryBook> libraryBooks = new HashSet<>();
 
     public Customer(String firstName, String lastName, String email, Integer age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.age = age;
+    }
+
+    public void addBooks(LibraryBook book) {
+
+        if (!libraryBooks.contains(book)) {
+            libraryBooks.add(book);
+            book.setCustomer(this);
+        }
+
+    }
+
+    public void removeBook(LibraryBook book) {
+
+        if (libraryBooks.contains(book)) {
+            libraryBooks.remove(book);
+            book.setCustomer(null);
+        }
+
     }
 
     public Customer() {

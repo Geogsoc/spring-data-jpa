@@ -10,4 +10,6 @@ public interface CustomerIdCardRepository extends JpaRepository<CustomerIdCard, 
 
     @Query("SELECT c FROM  CustomerIdCard c JOIN FETCH c.customer WHERE c.id = ?1")
    Optional<CustomerIdCard> findCustomerIdCardByIdWithCustomerIdCard(Long id);
+
+
 }

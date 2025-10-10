@@ -32,4 +32,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     int deleteCustomerByEmail(String email);
 
 
+    @Query("SELECT s from Customer s JOIN FETCH s.libraryBooks")
+    List<Customer> selectCustomerWithLibraryBooks();
+
+    @Query("SELECT s from Customer s JOIN FETCH s.libraryBooks WHERE s.id = ?1")
+    Optional<Customer> findCustomerByIdWithBooks(Long customerId);
 }

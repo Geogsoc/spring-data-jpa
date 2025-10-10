@@ -24,7 +24,8 @@ public class App {
     @Transactional
     CommandLineRunner commandLineRunner(CustomerRepository customerRepository,
                                         CustomerIdCardRepository customerIdCardRepository,
-                                        LibraryBookRepository libraryBookRepository) {
+                                        LibraryBookRepository libraryBookRepository,
+                                        CustomerService customerService) {
 
         return args -> {
 
@@ -32,30 +33,57 @@ public class App {
 
             LibraryBook warAndPeace = new LibraryBook();
             warAndPeace.setTitle("War and Peace");
-            warAndPeace.setCustomer(customer1);
+
+            customer1.addBooks(warAndPeace);
+
+            customerRepository.save(customer1);
+
+            customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+
+                System.out.println(customer.getFirstName());
+
+                customer.getLibraryBooks().forEach(libraryBook -> {
+                    System.out.println(libraryBook.getTitle());
+                    System.out.println(libraryBook.getCustomer());
+                });
+            });
+
+
+        };
+    }
+
+    private static void oneToMany(CustomerRepository customerRepository, LibraryBookRepository libraryBookRepository, CustomerService customerService) {
+        Customer customer1 = new Customer("Jeff", "Banks", "jeff.banks@gmail.com", 33);
+
+        LibraryBook warAndPeace = new LibraryBook();
+        warAndPeace.setTitle("War and Peace");
+        warAndPeace.setCustomer(customer1);
 //            LibraryBook hitchhikersGuide = new LibraryBook();
 //            hitchhikersGuide.setTitle("The Hitchhiker's Guide to the Galaxy");
 
 
-            customer1.setLibraryBooks(Set.of(warAndPeace));
+        customer1.setLibraryBooks(Set.of(warAndPeace));
 // now save the customer
-            customerRepository.save(customer1);
+        customerRepository.save(customer1);
 
-            //            hitchhikersGuide.setCustomer(customer1);
+        //            hitchhikersGuide.setCustomer(customer1);
+
+        customerService.getCustomerWithBooks(1L).ifPresent(c -> {
+            System.out.println(c.getFirstName() + " < - > " + c.getLastName());
+        });
 
 // add books to the customer's libraryBooks set
-            libraryBookRepository.findAll().forEach(libraryBook -> {
-                System.out.println(" here is book " + libraryBook.getTitle());
-                System.out.println(" here is customer " + libraryBook.getCustomer());
-            });
-            System.out.println("elis book ");
+        libraryBookRepository.findAll().forEach(libraryBook -> {
+            System.out.println(" here is book " + libraryBook.getTitle());
+            System.out.println(" here is customer " + libraryBook.getCustomer());
+        });
+        System.out.println("elis book ");
 
-            customerRepository.findAll().forEach(customer -> {
-                System.out.println(customer.getFirstName());
-                customer.getLibraryBooks().forEach(book -> System.out.println(book.getTitle()));
-            });
+        customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+            System.out.println(customer.getFirstName());
 
-        };
+            customer.getLibraryBooks().forEach(book -> System.out.println(book.getTitle()));
+        });
     }
 
     private static void example3(CustomerRepository customerRepository) {
