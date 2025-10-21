@@ -1,4 +1,4 @@
-package com.amigoscode;
+package com.amigoscode.book;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

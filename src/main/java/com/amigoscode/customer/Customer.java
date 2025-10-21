@@ -1,11 +1,12 @@
-package com.amigoscode;
+package com.amigoscode.customer;
 
 
+import com.amigoscode.book.LibraryBook;
+import com.amigoscode.customeridcard.CustomerIdCard;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -41,7 +42,7 @@ public class Customer {
     @Column(nullable = false)
     private Integer age;
 
-    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})//,fetch = FetchType.EAGER
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},orphanRemoval = true)//,fetch = FetchType.EAGER
     private Set<LibraryBook> libraryBooks = new HashSet<>();
 
     public Customer(String firstName, String lastName, String email, Integer age) {

@@ -1,6 +1,5 @@
-package com.amigoscode;
+package com.amigoscode.customeridcard;
 
-import org.apache.commons.lang3.text.translate.NumericEntityUnescaper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

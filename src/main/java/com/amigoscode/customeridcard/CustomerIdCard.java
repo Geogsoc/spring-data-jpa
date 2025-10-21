@@ -1,6 +1,7 @@
-package com.amigoscode;
+package com.amigoscode.customeridcard;
 
 
+import com.amigoscode.customer.Customer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

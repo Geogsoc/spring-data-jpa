@@ -1,5 +1,12 @@
 package com.amigoscode;
 
+import com.amigoscode.book.LibraryBook;
+import com.amigoscode.book.LibraryBookRepository;
+import com.amigoscode.customer.Customer;
+import com.amigoscode.customer.CustomerRepository;
+import com.amigoscode.customer.CustomerService;
+import com.amigoscode.customeridcard.CustomerIdCard;
+import com.amigoscode.customeridcard.CustomerIdCardRepository;
 import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -38,15 +45,28 @@ public class App {
 
             customerRepository.save(customer1);
 
+            System.out.println(libraryBookRepository.count());
+
             customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
 
-                System.out.println(customer.getFirstName());
+                        System.out.println(customer.getFirstName());
+                        System.out.println("Book size: " + customer.getLibraryBooks().size());
 
-                customer.getLibraryBooks().forEach(libraryBook -> {
-                    System.out.println(libraryBook.getTitle());
-                    System.out.println(libraryBook.getCustomer());
-                });
-            });
+                    });
+
+            customer1.removeBook(warAndPeace);
+
+            customerRepository.save(customer1);
+
+            System.out.println(libraryBookRepository.count());
+
+            customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+
+                        System.out.println(customer.getFirstName());
+                        System.out.println("Book size after removal : " + customer.getLibraryBooks().size());
+
+                    }
+            );
 
 
         };

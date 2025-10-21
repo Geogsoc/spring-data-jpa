@@ -1,5 +1,7 @@
-package com.amigoscode;
+package com.amigoscode.customer;
 
+import com.amigoscode.customer.Customer;
+import com.amigoscode.customer.CustomerRepository;
 import lombok.AllArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.stereotype.Service;

@@ -1,12 +1,12 @@
-package com.amigoscode;
+package com.amigoscode.book;
 
+import com.amigoscode.customer.Customer;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigInteger;
 import java.time.ZonedDateTime;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
