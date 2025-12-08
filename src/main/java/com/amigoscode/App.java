@@ -2,23 +2,30 @@ package com.amigoscode;
 
 import com.amigoscode.book.LibraryBook;
 import com.amigoscode.book.LibraryBookRepository;
+import com.amigoscode.course.Course;
+import com.amigoscode.course.CourseRepository;
 import com.amigoscode.customer.Customer;
 import com.amigoscode.customer.CustomerRepository;
 import com.amigoscode.customer.CustomerService;
 import com.amigoscode.customeridcard.CustomerIdCard;
 import com.amigoscode.customeridcard.CustomerIdCardRepository;
+import com.amigoscode.enrollment.CourseEnrollment;
+import com.amigoscode.enrollment.CourseEnrollmentRepository;
 import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @SpringBootApplication
+@EnableJpaAuditing
 public class App {
 
     public static void main(String[] args) {
@@ -32,44 +39,113 @@ public class App {
     CommandLineRunner commandLineRunner(CustomerRepository customerRepository,
                                         CustomerIdCardRepository customerIdCardRepository,
                                         LibraryBookRepository libraryBookRepository,
-                                        CustomerService customerService) {
+                                        CustomerService customerService,
+                                        CourseRepository courseRepository,
+                                        CourseEnrollmentRepository courseEnrollmentRepository) {
 
         return args -> {
 
-            Customer customer1 = new Customer("Jeff", "Banks", "jeff.banks@gmail.com", 33);
+            Customer jeff = new Customer("Jeff", "Banks", "jeff.banks@gmail.com", 33);
 
-            LibraryBook warAndPeace = new LibraryBook();
-            warAndPeace.setTitle("War and Peace");
+            jeff = customerRepository.save(jeff);
 
-            customer1.addBooks(warAndPeace);
+            System.out.println("Created at  : \n" + jeff.getCreatedAt());
+            System.out.println("Created by  : \n" + jeff.getCreatedBy());
+            System.out.println("Modified by  : \n" + jeff.getModifiedBy());
+            System.out.println("Modified at  : \n" + jeff.getModifiedAt());
 
-            customerRepository.save(customer1);
+            System.out.println("before delete count : " + customerRepository.count());
+            customerRepository.deleteById(1L);
 
-            System.out.println(libraryBookRepository.count());
 
-            customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+            System.out.println("deleted count: \n" + customerRepository.count());
+        };
+    }
 
-                        System.out.println(customer.getFirstName());
-                        System.out.println("Book size: " + customer.getLibraryBooks().size());
+    private static void courseEnrollmentPractice(CustomerRepository customerRepository, CourseEnrollmentRepository courseEnrollmentRepository) {
+        Customer jeff = new Customer("Jeff", "Banks", "jeff.banks@gmail.com", 33);
+        Customer elis = new Customer("Elis", "Porter", "elis@gmail.com", 44);
 
-                    });
 
-            customer1.removeBook(warAndPeace);
+        Course cScourse = new Course("Computer Science", "IT");
 
-            customerRepository.save(customer1);
+        Course aIcourse = new Course("AI", "IT");
 
-            System.out.println(libraryBookRepository.count());
 
-            customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+        jeff.addCourseEnrollment(cScourse);
+        jeff.addCourseEnrollment(aIcourse);
+        elis.addCourseEnrollment(cScourse);
 
-                        System.out.println(customer.getFirstName());
-                        System.out.println("Book size after removal : " + customer.getLibraryBooks().size());
+        customerRepository.saveAll(List.of(jeff, elis));
 
-                    }
+
+        courseEnrollmentRepository.findAll().forEach(courseEnrollment -> {
+
+            System.out.println(courseEnrollment.getEnrollmentId());
+
+            System.out.printf("%s  %s%n",
+                    courseEnrollment.getCustomer().getFirstName(),
+                    courseEnrollment.getCourse().getName()
             );
 
+            System.out.println();
+        });
 
-        };
+
+        jeff.removeCourseEnrollment(cScourse);
+
+        customerRepository.save(jeff);
+
+        System.out.println("removing -> \n");
+
+
+        courseEnrollmentRepository.findAll().forEach(courseEnrollment -> {
+
+            System.out.println(courseEnrollment.getEnrollmentId());
+
+            System.out.printf("%s  %s%n",
+                    courseEnrollment.getCustomer().getFirstName(),
+                    courseEnrollment.getCourse().getName()
+            );
+
+            System.out.println();
+        });
+
+        //   customerRepository.findAllWithCourses().forEach(customer -> System.out.println(customer.getCourses()));
+    }
+
+    private static void oneToManyExamples(CustomerRepository customerRepository, LibraryBookRepository libraryBookRepository) {
+        Customer customer1 = new Customer("Jeff", "Banks", "jeff.banks@gmail.com", 33);
+
+        LibraryBook warAndPeace = new LibraryBook();
+        warAndPeace.setTitle("War and Peace");
+
+        customer1.addBooks(warAndPeace);
+
+        customerRepository.save(customer1);
+
+        System.out.println(libraryBookRepository.count());
+
+        customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+
+            System.out.println(customer.getFirstName());
+            System.out.println("Book size: " + customer.getLibraryBooks().size());
+
+        });
+
+        customer1.removeBook(warAndPeace);
+
+        customerRepository.save(customer1);
+
+        System.out.println(libraryBookRepository.count());
+
+        customerRepository.selectCustomerWithLibraryBooks().forEach(customer -> {
+
+                    System.out.println(customer.getFirstName());
+                    System.out.println("Book size after removal : " + customer.getLibraryBooks().size());
+
+                }
+        );
     }
 
     private static void oneToMany(CustomerRepository customerRepository, LibraryBookRepository libraryBookRepository, CustomerService customerService) {

@@ -27,4 +27,17 @@ public class CustomerService {
         Hibernate.initialize(customer.get().getLibraryBooks());
         return customer;
     }
+
+//    @Transactional
+//    public Optional<Customer> getCustomerWithCourses(Long customerId) {
+//
+//        Optional<Customer> customer = customerRepository.findById(customerId);
+//
+//        if (customer.isEmpty()) {
+//            return Optional.empty();
+//        }
+//
+//        Hibernate.initialize(customer.get().getCourses());
+//        return customer;
+//    }
 }

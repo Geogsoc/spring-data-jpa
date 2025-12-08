@@ -37,4 +37,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     @Query("SELECT s from Customer s JOIN FETCH s.libraryBooks WHERE s.id = ?1")
     Optional<Customer> findCustomerByIdWithBooks(Long customerId);
+
+//    @Query("SELECT c FROM Customer c LEFT JOIN FETCH c.courses")
+//    List<Customer> findAllWithCourses();
 }

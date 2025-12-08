@@ -2,10 +2,24 @@ package com.amigoscode.customer;
 
 
 import com.amigoscode.book.LibraryBook;
+import com.amigoscode.course.Course;
 import com.amigoscode.customeridcard.CustomerIdCard;
+import com.amigoscode.enrollment.CourseEnrollment;
+import com.github.javafaker.DateAndTime;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.springframework.context.event.EventListener;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +31,9 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @EqualsAndHashCode
 @AllArgsConstructor
 @ToString(exclude = "libraryBooks")
+@SQLDelete(sql = "UPDATE customer SET deleted_at = NOW() WHERE id = ?")
+@SQLRestriction("deleted_at IS NULL")
+@EntityListeners({AuditingEntityListener.class})
 public class Customer {
 
     @Id
@@ -39,11 +56,42 @@ public class Customer {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedDate
+    @Column(updatable = false)
+    private Instant modifiedAt;
+
     @Column(nullable = false)
     private Integer age;
 
-    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE},orphanRemoval = true)//,fetch = FetchType.EAGER
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, orphanRemoval = true)
+//,fetch = FetchType.EAGER
     private Set<LibraryBook> libraryBooks = new HashSet<>();
+
+    @OneToMany(cascade = {CascadeType.PERSIST}, mappedBy = "customer",orphanRemoval = true)
+    private Set<CourseEnrollment> courseEnrollments = new HashSet<>();
+
+
+    private ZonedDateTime deletedAt;
+
+    public void addCourseEnrollment(Course course) {
+        courseEnrollments.add(new CourseEnrollment(this, course));
+    }
+
+    public void removeCourseEnrollment(Course course) {
+
+        courseEnrollments.removeIf(courseEnrollment -> courseEnrollment.getCourse().equals(course));
+
+
+    }
 
     public Customer(String firstName, String lastName, String email, Integer age) {
         this.firstName = firstName;
