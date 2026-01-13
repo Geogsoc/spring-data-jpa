@@ -21,6 +21,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
@@ -28,9 +29,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Entity
 @Setter
 @Getter
-@EqualsAndHashCode
 @AllArgsConstructor
-@ToString(exclude = "libraryBooks")
+//@ToString(exclude = "libraryBooks, customerIdCard, courseEnrollments")
 @SQLDelete(sql = "UPDATE customer SET deleted_at = NOW() WHERE id = ?")
 @SQLRestriction("deleted_at IS NULL")
 @EntityListeners({AuditingEntityListener.class})
@@ -64,6 +64,18 @@ public class Customer {
 
     @CreatedBy
     private String createdBy;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Customer customer)) return false;
+        return Objects.equals(id, customer.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
     @LastModifiedDate
     @Column(updatable = false)
@@ -120,5 +132,19 @@ public class Customer {
 
     public Customer() {
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", age=" + age +
+                ", createdAt=" + createdAt +
+                ", modifiedAt=" + modifiedAt +
+                '}';
+    }
+
 
 }

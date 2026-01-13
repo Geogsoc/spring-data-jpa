@@ -55,10 +55,22 @@ public class App {
             System.out.println("Modified at  : \n" + jeff.getModifiedAt());
 
             System.out.println("before delete count : " + customerRepository.count());
-            customerRepository.deleteById(1L);
+         //   customerRepository.deleteById(1L);
 
 
             System.out.println("deleted count: \n" + customerRepository.count());
+
+            LibraryBook book = new LibraryBook();
+            book.setTitle("Golfing in spain");
+            book.setCustomer(jeff);
+            libraryBookRepository.save(book);
+
+            libraryBookRepository.getAllBooksDto().forEach(System.out::println);
+
+            libraryBookRepository.findAll().forEach(System.out::println);
+
+            customerRepository.findById(1L).ifPresent(System.out::println);
+
         };
     }
 

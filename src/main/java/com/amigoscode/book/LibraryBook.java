@@ -2,10 +2,7 @@ package com.amigoscode.book;
 
 import com.amigoscode.customer.Customer;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.ZonedDateTime;
 
@@ -16,6 +13,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString(exclude = "customer")
 public class LibraryBook {
 
     @Id

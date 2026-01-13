@@ -10,6 +10,7 @@ import lombok.Setter;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -55,6 +56,18 @@ public class CourseEnrollment {
         this.enrollmentId = new EnrollmentId(customer.getId(), course.getId());
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CourseEnrollment courseEnrollment)) return false;
+        return Objects.equals(enrollmentId, courseEnrollment.enrollmentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(enrollmentId);
+    }
 
 //    public CourseEnrollment(Course course, Customer customer) {
 //        this.customer = customer;
