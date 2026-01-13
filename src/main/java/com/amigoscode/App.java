@@ -1,5 +1,8 @@
 package com.amigoscode;
 
+import com.amigoscode.account.Account;
+import com.amigoscode.account.AccountRepository;
+import com.amigoscode.account.AccountService;
 import com.amigoscode.book.LibraryBook;
 import com.amigoscode.book.LibraryBookRepository;
 import com.amigoscode.course.Course;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,35 +45,26 @@ public class App {
                                         LibraryBookRepository libraryBookRepository,
                                         CustomerService customerService,
                                         CourseRepository courseRepository,
-                                        CourseEnrollmentRepository courseEnrollmentRepository) {
+                                        CourseEnrollmentRepository courseEnrollmentRepository,
+                                        AccountService accountService,
+                                        AccountRepository accountRepository) {
 
         return args -> {
 
-            Customer jeff = new Customer("Jeff", "Banks", "jeff.banks@gmail.com", 33);
+            Account current = new Account();
+            current.setBalance(new BigDecimal("100"));
 
-            jeff = customerRepository.save(jeff);
+            accountRepository.save(current);
 
-            System.out.println("Created at  : \n" + jeff.getCreatedAt());
-            System.out.println("Created by  : \n" + jeff.getCreatedBy());
-            System.out.println("Modified by  : \n" + jeff.getModifiedBy());
-            System.out.println("Modified at  : \n" + jeff.getModifiedAt());
+            Account savings = new Account();
+            savings.setBalance(new BigDecimal("100"));
 
-            System.out.println("before delete count : " + customerRepository.count());
-         //   customerRepository.deleteById(1L);
+            accountRepository.save(savings);
+
+            accountService.transfer(current,savings,new BigDecimal("10"));
 
 
-            System.out.println("deleted count: \n" + customerRepository.count());
-
-            LibraryBook book = new LibraryBook();
-            book.setTitle("Golfing in spain");
-            book.setCustomer(jeff);
-            libraryBookRepository.save(book);
-
-            libraryBookRepository.getAllBooksDto().forEach(System.out::println);
-
-            libraryBookRepository.findAll().forEach(System.out::println);
-
-            customerRepository.findById(1L).ifPresent(System.out::println);
+            accountRepository.findAll().forEach(a-> System.out.println(a.getBalance()));
 
         };
     }
